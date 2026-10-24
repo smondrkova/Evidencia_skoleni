@@ -1,3 +1,4 @@
+import { isMatch } from 'date-fns';
 import type { Training, TrainingSession, TrainingSessionStatus } from '../types/training.js';
 import { checkDate, conflictingIds, parseCount, parsePrice, trainingCode, warn, type CsvRow } from './utils.ts';
 
@@ -23,10 +24,9 @@ export function processSessions(rows: CsvRow[], catalog: Training[], referenceDa
         const date = checkDate(row.datum);
 
         const times = /^(\d{2}:\d{2})-(\d{2}:\d{2})$/.exec(row.cas);
-        const timeFormat = /^([01]\d|2[0-3]):[0-5]\d$/;
         const validTimes = times
-            && timeFormat.test(times[1])
-            && timeFormat.test(times[2])
+            && isMatch(times[1], 'HH:mm')
+            && isMatch(times[2], 'HH:mm')
             && times[1] < times[2];
 
         const capacity = parseCount(row.kapacita);

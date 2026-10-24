@@ -6,6 +6,21 @@ import { processEmployees } from './process-employees.ts';
 import { processSessions } from './process-sessions.ts';
 import type { Training } from '../types/training.js';
 
+test('session import validates clock times and rejects reversed or empty ranges', () => {
+    const catalog: Training[] = [{ code: 'KYBER', name: 'Security', validity: { type: 'months', months: 12 }, requirement: { type: 'everyone' } }];
+    const values = { id_terminu: 'T001', kod_skoleni: 'KYBER', datum: '2026-10-15', cas: '', misto: 'Aula', kapacita: '20', obsazeno: '5', cena_na_osobu: '800', stav: 'plánováno' };
+    for (const time of ['24:00-25:00', '09:60-12:00', '12:00-09:00', '09:00-09:00', '', '9:00-12:00']) {
+        const [session] = processSessions([{ values: { ...values, cas: time }, sourceRow: 2 }], catalog, '2026-10-01');
+        assert.equal(session.reviewRequired, true);
+        assert.equal(session.startTime, null);
+        assert.equal(session.endTime, null);
+    }
+    const [valid] = processSessions([{ values: { ...values, cas: '09:00-12:00' }, sourceRow: 2 }], catalog, '2026-10-01');
+    assert.equal(valid.reviewRequired, false);
+    assert.equal(valid.startTime, '09:00');
+    assert.equal(valid.endTime, '12:00');
+});
+
 test('positions are normalized before being stored in application data', () => {
     assert.equal(normalizePosition(' TECHNIK   ÚDRŽBY '), 'Technik údržby');
     assert.equal(normalizePosition('technik udrzby'), 'Technik údržby');
