@@ -8,7 +8,10 @@ export type TrainingRecommendation = {
     employeeId: string;
     trainingCode: string;
     session: TrainingSession | null;
+    alternatives: TrainingSession[];
     reason: string;
+    selectionReason: string;
+    remainingPlaces: number | null;
 };
 
 type AssignedSession = Pick<TrainingSession, 'date' | 'startTime' | 'endTime'>;
@@ -36,9 +39,7 @@ export function getTrainingRecommendations(
         sessions
             .filter(
                 (session) =>
-                    session.id !== '' &&
-                    session.capacity !== null &&
-                    session.occupied !== null,
+                    session.id !== '' && session.capacity !== null && session.occupied !== null,
             )
             .map((session) => [session.id, session.capacity! - session.occupied!]),
     );
@@ -66,18 +67,26 @@ export function getTrainingRecommendations(
             : [];
         const session = timely[0] ?? available[0] ?? null;
         let reason: string;
+        let selectionReason: string;
+        let remainingPlaces: number | null = null;
 
         if (!session) {
             reason =
                 available.length === 0
                     ? 'No suitable future session has free capacity and no time conflict.'
                     : 'No suitable session could be selected.';
+            selectionReason = reason;
         } else {
             const hasGap = Boolean(priority.validUntil && session.date! > priority.validUntil);
             reason = hasGap
                 ? `Recommended session is after the validity end (${priority.validUntil}); a gap in validity is possible.`
                 : priority.reason;
-            remainingCapacity.set(session.id, (remainingCapacity.get(session.id) ?? 1) - 1);
+            remainingPlaces = (remainingCapacity.get(session.id) ?? 1) - 1;
+            selectionReason =
+                priority.validUntil && session.date! <= priority.validUntil
+                    ? `Selected the earliest available session before the validity end (${priority.validUntil}).`
+                    : 'Selected the earliest available future session.';
+            remainingCapacity.set(session.id, remainingPlaces);
             assignedByEmployee.set(priority.employeeId, [
                 ...(assignedByEmployee.get(priority.employeeId) ?? []),
                 session,
@@ -88,7 +97,10 @@ export function getTrainingRecommendations(
             employeeId: priority.employeeId,
             trainingCode: priority.trainingCode,
             session,
+            alternatives: available,
             reason,
+            selectionReason,
+            remainingPlaces,
         });
     }
 
