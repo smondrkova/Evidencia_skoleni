@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { employees } from '../employee-data';
 import { EmployeeTable } from '../components/employees/EmployeeTable';
 
@@ -7,6 +8,7 @@ function normalizeSearch(value: string): string {
 }
 
 export function EmployeesPage() {
+    const navigate = useNavigate();
     const [search, setSearch] = useState('');
     const query = normalizeSearch(search.trim());
     const filteredEmployees = employees.filter((employee) =>
@@ -30,7 +32,8 @@ export function EmployeesPage() {
                     </p>
                     <h1 className="text-3xl font-semibold tracking-tight">Employees</h1>
                     <p className="mt-2 text-sm leading-relaxed text-slate-500">
-                        Browse contact and employment information in the employee directory.
+                        Browse the employee directory. Select a row to view contact and employment
+                        details.
                     </p>
                 </div>
                 <section
@@ -60,7 +63,12 @@ export function EmployeesPage() {
                             />
                         </label>
                     </div>
-                    <EmployeeTable employees={filteredEmployees} />
+                    <EmployeeTable
+                        employees={filteredEmployees}
+                        onSelect={(employee) =>
+                            navigate(`/employees/${encodeURIComponent(employee.id)}`)
+                        }
+                    />
                 </section>
             </main>
         </>

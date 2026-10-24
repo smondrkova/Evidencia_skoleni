@@ -1,16 +1,21 @@
 import type { Employee } from '../../types/employee';
 import { EmployeeStatusBadge } from './EmployeeStatusBadge';
+import { Link } from 'react-router-dom';
 
 type EmployeeTableProps = {
     employees: Employee[];
+    onSelect: (employee: Employee) => void;
 };
 
-// Display employee information and data quality flags.
-export function EmployeeTable({ employees }: EmployeeTableProps) {
+// Open details from the whole row while keeping a normal link for keyboard users.
+export function EmployeeTable({ employees, onSelect }: EmployeeTableProps) {
     return (
         <div className="max-h-[65vh] overflow-auto">
             <table className="w-full text-left text-sm">
-                <caption className="sr-only">Employees and their employment details.</caption>
+                <caption className="sr-only">
+                    Employees and their employment details. Select a row or follow a name to view
+                    the full record.
+                </caption>
                 <thead className="sticky top-0 z-10 bg-slate-50 text-xs font-semibold text-slate-500">
                     <tr>
                         <th
@@ -49,10 +54,25 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                     {employees.map((employee, index) => (
                         <tr
                             key={`${employee.id}-${index}`}
-                            className="group transition-colors hover:bg-blue-50/60 focus-within:bg-blue-50/60"
+                            className="group cursor-pointer transition-colors hover:bg-blue-50/60 focus-within:bg-blue-50/60"
+                            onClick={(event) => {
+                                if (
+                                    event.defaultPrevented ||
+                                    event.metaKey ||
+                                    event.ctrlKey ||
+                                    event.shiftKey ||
+                                    event.altKey ||
+                                    (event.target as HTMLElement).closest('a')
+                                )
+                                    return;
+                                onSelect(employee);
+                            }}
                         >
                             <td className="px-6 py-4">
-                                <div className="group flex items-center gap-3 rounded text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600">
+                                <Link
+                                    to={`/employees/${encodeURIComponent(employee.id)}`}
+                                    className="group flex cursor-pointer items-center gap-3 rounded text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600"
+                                >
                                     <span
                                         className="flex size-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-700"
                                         aria-hidden="true"
@@ -61,14 +81,14 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                                         {employee.lastName.charAt(0)}
                                     </span>
                                     <span>
-                                        <span className="block font-semibold whitespace-nowrap text-slate-800 ">
+                                        <span className="block font-semibold whitespace-nowrap text-slate-800 group-hover:text-blue-700 group-hover:underline">
                                             {employee.firstName} {employee.lastName}
                                         </span>
                                         <span className="mt-0.5 block text-xs text-slate-500">
                                             {employee.id || 'No ID'}
                                         </span>
                                     </span>
-                                </div>
+                                </Link>
                             </td>
                             <td className="px-5 py-4 whitespace-nowrap text-slate-600">
                                 {employee.department || 'Not provided'}
