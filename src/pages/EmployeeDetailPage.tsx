@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { employees } from '../employee-data';
-import { trainings, completions } from '../training-data';
+import { employees, trainings, completions } from '../app-data';
 import { EmployeeDetail } from '../components/employees/EmployeeDetail';
 import { EmployeeTrainingTable } from '../components/employees/EmployeeTrainingTable';
 

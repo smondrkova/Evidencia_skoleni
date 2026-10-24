@@ -1,15 +1,10 @@
-import { format, parseISO } from 'date-fns';
+import { formatDate } from '../../utils/formatDate';
 import type { Employee } from '../../types/employee';
 import { EmployeeStatusBadge } from './EmployeeStatusBadge';
 
 type EmployeeDetailProps = {
     employee: Employee;
 };
-
-// Format imported calendar dates for the English employee detail.
-function formatDate(value: string | null): string {
-    return value ? format(parseISO(value), 'd MMM yyyy') : 'Not provided';
-}
 
 // Present employee fields independently of page navigation.
 export function EmployeeDetail({ employee }: EmployeeDetailProps) {

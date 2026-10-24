@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { employees } from '../employee-data';
+import { employees } from '../app-data';
 import { EmployeeTable } from '../components/employees/EmployeeTable';
 
 function normalizeSearch(value: string): string {

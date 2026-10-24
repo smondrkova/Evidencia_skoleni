@@ -1,4 +1,4 @@
-import { format, isValid, parseISO } from 'date-fns';
+import { formatDate } from '../../utils/formatDate';
 import type { Training, TrainingCompletion, TrainingStatus } from '../../types/training';
 import { getTrainingValidity } from '../../domain/validity';
 
@@ -15,13 +15,6 @@ const statuses: Record<TrainingStatus, { label: string; className: string }> = {
     missing: { label: 'Missing record', className: 'bg-slate-100 text-slate-600' },
     uncertain: { label: 'Uncertain', className: 'bg-violet-50 text-violet-700' },
 };
-
-// Use one display format for dates and a dash for missing or invalid values.
-function formatDate(value: string | null | undefined): string {
-    if (!value) return '—';
-    const date = parseISO(value);
-    return isValid(date) ? format(date, 'dd. MM. yyyy') : '—';
-}
 
 export function EmployeeTrainingTable({
     trainings,
