@@ -1,9 +1,31 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { checkDate, conflictingIds, formatName, parseCount, parsePrice, trainingCode } from './utils.ts';
+import { checkDate, conflictingIds, formatName, normalizeDepartment, parseCount, parsePrice, trainingCode } from './utils.ts';
+import { processCatalog } from './process-catalog.ts';
 import { processEmployees } from './process-employees.ts';
 import { processSessions } from './process-sessions.ts';
 import type { Training } from '../types/training.js';
+
+test('department variants use canonical names and unknown labels stay unchanged', () => {
+    assert.equal(normalizeDepartment('Laboratore'), 'Laboratoře');
+    assert.equal(normalizeDepartment('Laboratoře'), 'Laboratoře');
+    assert.equal(normalizeDepartment(' SPRÁVA   BUDOV '), 'Správa budov');
+    assert.equal(normalizeDepartment('sprava budov'), 'Správa budov');
+    assert.equal(normalizeDepartment('Studijní'), 'Studijní oddělení');
+    assert.equal(normalizeDepartment('Studijni oddeleni'), 'Studijní oddělení');
+    assert.equal(normalizeDepartment('Personalni oddeleni'), 'Personální oddělení');
+    assert.equal(normalizeDepartment('VEDENÍ'), 'Vedení');
+    assert.equal(normalizeDepartment(' Nový útvar '), 'Nový útvar');
+    assert.equal(normalizeDepartment('  '), null);
+});
+
+test('catalog department requirements use the same names and remove repeated variants', () => {
+    const catalog = processCatalog([{
+        values: { kod: 'PRV-POM', nazev: 'First aid', platnost_mesicu: '36', povinne_pro: 'UTVAR:Laboratore;Laboratoře;SPRAVA BUDOV' },
+        sourceRow: 2,
+    }]);
+    assert.deepEqual(catalog[0].requirement, { type: 'departments', department: ['Laboratoře', 'Správa budov'] });
+});
 
 test('employee statuses are mapped and unknown values require review', () => {
     const cases = [
