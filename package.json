@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "import-data": "tsx src/scripts/import-data.ts",
+    "test:import": "tsx --test src/scripts/data-import.test.ts",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
