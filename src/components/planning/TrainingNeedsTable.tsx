@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom';
 import type { Employee } from '../../types/employee';
 import type { Training } from '../../types/training';
 import type { TrainingPriority } from '../../domain/priorities';
+import type { TrainingRecommendation } from '../../domain/recommendations';
 import { formatDate } from '../../utils/formatDate';
 
 type TrainingNeedsTableProps = {
     priorities: TrainingPriority[];
+    recommendations: TrainingRecommendation[];
     employees: Employee[];
     trainings: Training[];
 };
@@ -16,13 +18,18 @@ const statuses = {
     expiringSoon: { label: 'Expiring soon', className: 'bg-amber-50 text-amber-800' },
 };
 
-// Preserve the domain priority order while linking each need to its employee and training.
-export function TrainingNeedsTable({ priorities, employees, trainings }: TrainingNeedsTableProps) {
+export function TrainingNeedsTable({
+    priorities,
+    recommendations,
+    employees,
+    trainings,
+}: TrainingNeedsTableProps) {
     return (
         <div className="max-h-[65vh] overflow-auto">
             <table className="w-full text-left text-sm">
                 <caption className="sr-only">
-                    Required training needs ordered by urgency. Sessions have not been assigned.
+                    Required training needs ordered by urgency. Suggested training sessions for each
+                    prioritized need.
                 </caption>
                 <thead className="sticky top-0 bg-slate-50 text-xs text-slate-500">
                     <tr>
@@ -62,6 +69,12 @@ export function TrainingNeedsTable({ priorities, employees, trainings }: Trainin
                         >
                             Reason
                         </th>
+                        <th
+                            scope="col"
+                            className="px-5 py-3.5"
+                        >
+                            Suggested session
+                        </th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -71,6 +84,12 @@ export function TrainingNeedsTable({ priorities, employees, trainings }: Trainin
                             (course) => course.code === item.trainingCode,
                         );
                         const style = statuses[item.status];
+                        const recommendation = recommendations.find(
+                            (candidate) =>
+                                candidate.employeeId === item.employeeId &&
+                                candidate.trainingCode === item.trainingCode,
+                        );
+                        const session = recommendation?.session;
                         return (
                             <tr key={`${item.employeeId}-${item.trainingCode}`}>
                                 <td className="px-6 py-4 whitespace-nowrap font-medium">
@@ -111,7 +130,24 @@ export function TrainingNeedsTable({ priorities, employees, trainings }: Trainin
                                 <td className="px-5 py-4 whitespace-nowrap">
                                     {formatDate(item.validUntil)}
                                 </td>
-                                <td className="min-w-56 px-5 py-4 text-slate-500">{item.reason}</td>
+                                <td className="min-w-56 px-5 py-4 text-slate-500">
+                                    {recommendation?.reason ?? item.reason}
+                                </td>
+                                <td className="min-w-56 px-5 py-4">
+                                    {session ? (
+                                        <>
+                                            <span className="font-medium">
+                                                {formatDate(session.date)} · {session.startTime}–
+                                                {session.endTime}
+                                            </span>
+                                            <span className="mt-1 block text-xs text-slate-500">
+                                                {session.location} · {session.id}
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="text-amber-800">No suitable session</span>
+                                    )}
+                                </td>
                             </tr>
                         );
                     })}

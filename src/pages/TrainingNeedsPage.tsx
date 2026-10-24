@@ -1,5 +1,6 @@
-import { employees, trainings, completions } from '../app-data';
+import { employees, trainings, completions, sessions } from '../app-data';
 import { getTrainingPriorities } from '../domain/priorities';
+import { getTrainingRecommendations } from '../domain/recommendations';
 import { formatDate } from '../utils/formatDate';
 import { TrainingNeedsTable } from '../components/planning/TrainingNeedsTable';
 import { PriorityReviewsTable } from '../components/planning/PriorityReviewsTable';
@@ -15,10 +16,16 @@ export function TrainingNeedsPage() {
         completions,
         referenceDate,
     );
+    const recommendations = getTrainingRecommendations(
+        priorities,
+        planningEmployees,
+        sessions,
+        referenceDate,
+    );
     const urgentCount = priorities.filter((item) => item.priority === 1).length;
 
     return (
-        <main className="mx-auto max-w-6xl px-5 py-9 sm:px-8 sm:py-12">
+        <main className="mx-auto max-w-screen-2xl px-5 py-9 sm:px-8 sm:py-12">
             <p className="mb-2 text-xs font-semibold tracking-widest text-blue-600">PLANNING</p>
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <h1 className="text-3xl font-semibold tracking-tight">Training needs</h1>
@@ -47,9 +54,14 @@ export function TrainingNeedsPage() {
                         Missing records come first within the urgent group, then the oldest expiry
                         dates.
                     </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                        Suggested sessions account for available capacity and overlaps for the same
+                        employee. They are proposals for review, not confirmed bookings.
+                    </p>
                 </div>
                 <TrainingNeedsTable
                     priorities={priorities}
+                    recommendations={recommendations}
                     employees={planningEmployees}
                     trainings={trainings}
                 />
