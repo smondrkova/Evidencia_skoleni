@@ -56,7 +56,7 @@ export function AvailableSessions({
                                         scope="col"
                                         className="px-3 py-2"
                                     >
-                                        Available places
+                                        Registered / capacity
                                     </th>
                                     <th
                                         scope="col"
@@ -80,8 +80,7 @@ export function AvailableSessions({
                                         </td>
                                         <td className="px-3 py-3">{session.location}</td>
                                         <td className="px-3 py-3">
-                                            {session.capacity! - session.occupied!} /{' '}
-                                            {session.capacity}
+                                            {session.occupied} / {session.capacity}
                                         </td>
                                         <td className="px-3 py-3 whitespace-nowrap">
                                             {session.pricePerPerson === null
