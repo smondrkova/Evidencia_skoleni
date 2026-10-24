@@ -7,7 +7,6 @@ export type Training = {
 
 export type TrainingValidity = 
     | {type: "months", months: number}
-    | {type: "unlimited"}
     | {type: "unknown"};
 
 export type TrainingRequirement = 
