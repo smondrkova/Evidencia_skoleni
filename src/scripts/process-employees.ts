@@ -1,5 +1,5 @@
 import type { Employee, EmployeeStatus } from '../types/employee.js';
-import { checkDate, conflictingIds, formatName, normalizeDepartment, warn, type CsvRow } from './utils.ts';
+import { checkDate, conflictingIds, formatName, normalizeDepartment, normalizePosition, warn, type CsvRow } from './utils.ts';
 
 // Prepare employees and flag data that needs review.
 export function processEmployees(rows: CsvRow[], referenceDate: string): Employee[] {
@@ -48,7 +48,7 @@ export function processEmployees(rows: CsvRow[], referenceDate: string): Employe
             lastName: formatName(row.prijmeni),
             email: row.email.toLowerCase(),
             department: normalizeDepartment(row.utvar),
-            position: row.pozice,
+            position: normalizePosition(row.pozice),
             managerEmail: row.vedouci_email.toLowerCase() || null,
             startDate,
             endDate,

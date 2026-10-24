@@ -1,10 +1,27 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { checkDate, conflictingIds, formatName, normalizeDepartment, parseCount, parsePrice, trainingCode } from './utils.ts';
+import { checkDate, conflictingIds, formatName, normalizeDepartment, normalizePosition, parseCount, parsePrice, trainingCode } from './utils.ts';
 import { processCatalog } from './process-catalog.ts';
 import { processEmployees } from './process-employees.ts';
 import { processSessions } from './process-sessions.ts';
 import type { Training } from '../types/training.js';
+
+test('positions are normalized before being stored in application data', () => {
+    assert.equal(normalizePosition(' TECHNIK   ÚDRŽBY '), 'Technik údržby');
+    assert.equal(normalizePosition('technik udrzby'), 'Technik údržby');
+    assert.equal(normalizePosition('ŘIDIČ'), 'Řidič');
+    assert.equal(normalizePosition('Vedoucí'), 'Vedoucí');
+    assert.equal(normalizePosition(' Nová   pozice '), 'Nová pozice');
+    assert.equal(normalizePosition(' '), '');
+});
+
+test('catalog position rules use the same canonical labels as employees', () => {
+    const catalog = processCatalog([{
+        values: { kod: 'ZDVIH', nazev: 'Equipment operation', platnost_mesicu: '24', povinne_pro: 'POZICE: TECHNIK  ÚDRŽBY;technik udrzby' },
+        sourceRow: 2,
+    }]);
+    assert.deepEqual(catalog[0].requirement, { type: 'positions', position: ['Technik údržby'] });
+});
 
 test('department variants use canonical names and unknown labels stay unchanged', () => {
     assert.equal(normalizeDepartment('Laboratore'), 'Laboratoře');

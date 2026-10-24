@@ -1,5 +1,5 @@
 import type { Training, TrainingRequirement, TrainingValidity } from '../types/training.js';
-import { conflictingIds, normalizeDepartment, parseCount, trainingCode, warn, type CsvRow } from './utils.ts';
+import { conflictingIds, normalizeDepartment, normalizePosition, parseCount, trainingCode, warn, type CsvRow } from './utils.ts';
 
 // Read training requirements and flag unknown rules.
 function parseRequirement(value: string): TrainingRequirement {
@@ -13,7 +13,10 @@ function parseRequirement(value: string): TrainingRequirement {
             const departments = items.map(item => normalizeDepartment(item) ?? item);
             return { type: 'departments', department: [...new Set(departments)] };
         }
-        if (prefix === 'POZICE') return { type: 'positions', position: items };
+        if (prefix === 'POZICE') {
+            const positions = items.map(item => normalizePosition(item));
+            return { type: 'positions', position: [...new Set(positions)] };
+        }
     }
     return {
         type: 'unknown',

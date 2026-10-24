@@ -18,7 +18,7 @@ const departmentNames: Record<string, string> = {
 
 // Unify known department variants.
 export function normalizeDepartment(value: string): string | null {
-    const department = value.trim();
+    const department = value.trim().replace(/\s+/g, ' ');
     if (!department) return null;
     const key = department
         .toLowerCase()
@@ -26,6 +26,27 @@ export function normalizeDepartment(value: string): string | null {
         .replace(/\p{M}/gu, '')
         .replace(/\s+/g, ' ');
     return departmentNames[key] ?? department;
+}
+
+const positionNames: Record<string, string> = {
+    vedouci: 'Vedoucí',
+    specialista: 'Specialista',
+    asistent: 'Asistent',
+    referent: 'Referent',
+    ucetni: 'Účetní',
+    vyvojar: 'Vývojář',
+    technik: 'Technik',
+    knihovnik: 'Knihovník',
+    'technik udrzby': 'Technik údržby',
+    ridic: 'Řidič',
+    laborant: 'Laborant',
+};
+
+// Store known positions consistently.
+export function normalizePosition(value: string): string {
+    const position = value.trim().replace(/\s+/g, ' ');
+    const key = position.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+    return positionNames[key] ?? position;
 }
 
 // Read CSV using its source encoding, check columns and remove helper rows and duplicates.
