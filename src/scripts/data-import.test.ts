@@ -81,7 +81,26 @@ test('employee statuses are mapped and unknown values require review', () => {
 
         assert.equal(employees[0].status, expectedStatus);
         assert.equal(employees[0].reviewRequired, expectedStatus === 'unknown');
+        assert.deepEqual(employees[0].reviewReasons, expectedStatus === 'unknown'
+            ? ['Employment status is missing or not recognized.']
+            : []);
     }
+});
+
+test('employee review reasons retain field errors and manager lookup errors together', () => {
+    const values = {
+        id_zamestnance: 'E001', jmeno: 'Test', prijmeni: 'Employee',
+        email: 'invalid email', utvar: '', pozice: 'Specialista',
+        vedouci_email: 'missing@example.com', datum_nastupu: '2020-01-01',
+        datum_ukonceni: '', stav: 'aktivní',
+    };
+    const [employee] = processEmployees([{ values, sourceRow: 2 }], '2026-10-01');
+    assert.equal(employee.reviewRequired, true);
+    assert.deepEqual(employee.reviewReasons, [
+        'Department is missing.',
+        'Email is missing or has an invalid format.',
+        'Manager email does not match any employee.',
+    ]);
 });
 
 test('session statuses are mapped and unknown values require review', () => {

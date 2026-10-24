@@ -10,6 +10,7 @@ export type Employee = {
     endDate: string | null;
     status: EmployeeStatus;
     reviewRequired: boolean;
+    reviewReasons: string[];
 };
 
 export type EmployeeStatus = 'active' | 'terminated' | 'parentalLeave' | 'unknown';

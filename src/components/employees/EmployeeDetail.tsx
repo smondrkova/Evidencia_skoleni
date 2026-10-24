@@ -29,10 +29,14 @@ export function EmployeeDetail({ employee }: EmployeeDetailProps) {
                 <EmployeeStatusBadge status={employee.status} />
 
                 {employee.reviewRequired && (
-                    <p className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm leading-relaxed text-amber-900">
-                        This employee record contains data that needs review. Check the source data
-                        before relying on incomplete or inconsistent details.
-                    </p>
+                    <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm leading-relaxed text-amber-900">
+                        <p className="font-medium">This employee record needs review:</p>
+                        <ul className="mt-2 list-disc space-y-1 pl-5">
+                            {employee.reviewReasons?.map((reason) => (
+                                <li key={reason}>{reason}</li>
+                            ))}
+                        </ul>
+                    </div>
                 )}
 
                 <dl className="mt-7 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
