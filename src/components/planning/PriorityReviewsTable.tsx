@@ -9,7 +9,6 @@ type PriorityReviewsTableProps = {
     trainings: Training[];
 };
 
-// Keep uncertain cases visible without presenting them as automatic planning requests.
 export function PriorityReviewsTable({ reviews, employees, trainings }: PriorityReviewsTableProps) {
     return (
         <div className="overflow-x-auto">

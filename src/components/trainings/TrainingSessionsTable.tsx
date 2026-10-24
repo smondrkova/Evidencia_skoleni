@@ -4,7 +4,6 @@ import { formatDate } from '../../utils/formatDate';
 const priceFormat = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'CZK' });
 const statusLabels = { planned: 'Planned', cancelled: 'Cancelled', unknown: 'Unknown status' };
 
-// Show upcoming sessions with status and review flags, including those without available places.
 export function TrainingSessionsTable({ sessions }: { sessions: TrainingSession[] }) {
     return (
         <div className="overflow-x-auto">
