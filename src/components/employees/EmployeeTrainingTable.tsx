@@ -9,8 +9,10 @@ import type {
 } from '../../types/training';
 import { getTrainingValidity } from '../../domain/validity';
 import { getTrainingRequirement } from '../../domain/requirements';
+import { getTrainingPriorities } from '../../domain/priorities';
+import { getTrainingRecommendations } from '../../domain/recommendations';
 import type { Employee } from '../../types/employee';
-import { AvailableSessions } from './AvailableSessions';
+import { SuggestedSessionsDialog } from '../planning/SuggestedSessionsDialog';
 
 type EmployeeTrainingTableProps = {
     employee: Employee;
@@ -61,6 +63,18 @@ export function EmployeeTrainingTable({
                 .map((record) => record.trainingCode),
         ),
     ];
+    const employeePriorities = getTrainingPriorities(
+        [employee],
+        trainings,
+        records,
+        referenceDate,
+    ).priorities;
+    const employeeRecommendations = getTrainingRecommendations(
+        employeePriorities,
+        [employee],
+        sessions,
+        referenceDate,
+    );
 
     return (
         <section
@@ -131,6 +145,9 @@ export function EmployeeTrainingTable({
                         {visibleTrainings.map(({ training, requirement }) => {
                             const result = getTrainingValidity(training, records, referenceDate);
                             const style = statuses[result.status];
+                            const recommendation = employeeRecommendations.find(
+                                (item) => item.trainingCode === training.code,
+                            );
                             return (
                                 <Fragment key={training.code}>
                                     <tr>
@@ -179,19 +196,24 @@ export function EmployeeTrainingTable({
                                             )}
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td
-                                            colSpan={6}
-                                            className="px-6 pb-4 pt-2"
-                                        >
-                                            <AvailableSessions
-                                                trainingCode={training.code}
-                                                trainingName={training.name}
-                                                sessions={sessions}
-                                                referenceDate={referenceDate}
-                                            />
-                                        </td>
-                                    </tr>
+                                    {recommendation && (
+                                        <tr>
+                                            <td
+                                                colSpan={6}
+                                                className="px-6 pb-4 pt-2"
+                                            >
+                                                <div className="rounded-lg border border-blue-200 bg-blue-50/60 p-4">
+                                                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-blue-800">
+                                                        Suggested session
+                                                    </p>
+                                                    <SuggestedSessionsDialog
+                                                        recommendation={recommendation}
+                                                        trainingName={training.name}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
                                 </Fragment>
                             );
                         })}

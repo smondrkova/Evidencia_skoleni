@@ -3,6 +3,7 @@ import type { TrainingSession } from '../types/training.js';
 import type { TrainingPriority } from './priorities.ts';
 import { getAvailableSessions } from './planner.ts';
 import { getReferenceDate } from './validity.ts';
+import { formatDate } from '../utils/formatDate.ts';
 
 export type TrainingRecommendation = {
     employeeId: string;
@@ -84,7 +85,7 @@ export function getTrainingRecommendations(
             remainingPlaces = (remainingCapacity.get(session.id) ?? 1) - 1;
             selectionReason =
                 priority.validUntil && session.date! <= priority.validUntil
-                    ? `Selected the earliest available session before the validity end (${priority.validUntil}).`
+                    ? `Selected the earliest available session before the validity end (${formatDate(priority.validUntil)}).`
                     : 'Selected the earliest available future session.';
             remainingCapacity.set(session.id, remainingPlaces);
             assignedByEmployee.set(priority.employeeId, [
