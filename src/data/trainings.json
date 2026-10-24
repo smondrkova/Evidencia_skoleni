@@ -1,0 +1,127 @@
+[
+  {
+    "code": "BOZP-Z",
+    "name": "BOZP – základní školení",
+    "validity": {
+      "type": "months",
+      "months": 24
+    },
+    "requirement": {
+      "type": "everyone"
+    }
+  },
+  {
+    "code": "POZ-OCH",
+    "name": "Požární ochrana",
+    "validity": {
+      "type": "months",
+      "months": 24
+    },
+    "requirement": {
+      "type": "everyone"
+    }
+  },
+  {
+    "code": "GDPR",
+    "name": "Ochrana osobních údajů",
+    "validity": {
+      "type": "months",
+      "months": 36
+    },
+    "requirement": {
+      "type": "everyone"
+    }
+  },
+  {
+    "code": "KYBER",
+    "name": "Kybernetická bezpečnost",
+    "validity": {
+      "type": "months",
+      "months": 12
+    },
+    "requirement": {
+      "type": "everyone"
+    }
+  },
+  {
+    "code": "PRV-POM",
+    "name": "První pomoc",
+    "validity": {
+      "type": "months",
+      "months": 36
+    },
+    "requirement": {
+      "type": "departments",
+      "department": [
+        "Laboratoře",
+        "Správa budov",
+        "Knihovna"
+      ]
+    }
+  },
+  {
+    "code": "RIDIC",
+    "name": "Řidiči referenti",
+    "validity": {
+      "type": "months",
+      "months": 12
+    },
+    "requirement": {
+      "type": "positions",
+      "position": [
+        "Řidič"
+      ]
+    }
+  },
+  {
+    "code": "LAB-BEZ",
+    "name": "Bezpečná práce v laboratoři",
+    "validity": {
+      "type": "months",
+      "months": 24
+    },
+    "requirement": {
+      "type": "departments",
+      "department": [
+        "Laboratoře"
+      ]
+    }
+  },
+  {
+    "code": "ZDVIH",
+    "name": "Obsluha zdvihacích zařízení",
+    "validity": {
+      "type": "months",
+      "months": 24
+    },
+    "requirement": {
+      "type": "positions",
+      "position": [
+        "Technik údržby"
+      ]
+    }
+  },
+  {
+    "code": "LEAD",
+    "name": "Základy vedení lidí",
+    "validity": {
+      "type": "unknown"
+    },
+    "requirement": {
+      "type": "positions",
+      "position": [
+        "Vedoucí"
+      ]
+    }
+  },
+  {
+    "code": "ANGL",
+    "name": "Anglický jazyk – kurz",
+    "validity": {
+      "type": "unknown"
+    },
+    "requirement": {
+      "type": "optional"
+    }
+  }
+]
