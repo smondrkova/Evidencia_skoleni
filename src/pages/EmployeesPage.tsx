@@ -2,6 +2,18 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { employees } from '../app-data';
 import { EmployeeTable } from '../components/employees/EmployeeTable';
+import {
+    EmployeeFilters,
+    type EmployeeFilterValues,
+} from '../components/employees/EmployeeFilters';
+
+const departments = [
+    ...new Set(employees.map((employee) => employee.department || 'Not provided')),
+].sort((a, b) => a.localeCompare(b));
+const positions = [
+    ...new Set(employees.map((employee) => employee.position || 'Not provided')),
+].sort((a, b) => a.localeCompare(b));
+const emptyFilters: EmployeeFilterValues = { department: '', position: '', status: '' };
 
 function normalizeSearch(value: string): string {
     return value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
@@ -10,9 +22,11 @@ function normalizeSearch(value: string): string {
 export function EmployeesPage() {
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
+    const [filters, setFilters] = useState<EmployeeFilterValues>(emptyFilters);
     const query = normalizeSearch(search.trim());
-    const filteredEmployees = employees.filter((employee) =>
-        normalizeSearch(
+    const hasFilters = Boolean(search || filters.department || filters.position || filters.status);
+    const filteredEmployees = employees.filter((employee) => {
+        const matchesSearch = normalizeSearch(
             [
                 employee.firstName,
                 employee.lastName,
@@ -20,8 +34,14 @@ export function EmployeesPage() {
                 employee.department,
                 employee.position,
             ].join(' '),
-        ).includes(query),
-    );
+        ).includes(query);
+        const matchesDepartment =
+            !filters.department || (employee.department || 'Not provided') === filters.department;
+        const matchesPosition =
+            !filters.position || (employee.position || 'Not provided') === filters.position;
+        const matchesStatus = !filters.status || employee.status === filters.status;
+        return matchesSearch && matchesDepartment && matchesPosition && matchesStatus;
+    });
 
     return (
         <>
@@ -63,6 +83,17 @@ export function EmployeesPage() {
                             />
                         </label>
                     </div>
+                    <EmployeeFilters
+                        departments={departments}
+                        positions={positions}
+                        values={filters}
+                        onChange={setFilters}
+                        hasFilters={hasFilters}
+                        onClear={() => {
+                            setSearch('');
+                            setFilters(emptyFilters);
+                        }}
+                    />
                     <EmployeeTable
                         employees={filteredEmployees}
                         onSelect={(employee) =>
