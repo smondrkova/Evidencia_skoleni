@@ -26,3 +26,4 @@ dist-ssr
 # Docs and data
 /docs/
 /data/
+/src/data/
