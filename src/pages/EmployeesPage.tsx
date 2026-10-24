@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { employees } from '../employee-data';
+import { EmployeeTable } from '../components/employees/EmployeeTable';
 
 function normalizeSearch(value: string): string {
     return value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
@@ -59,9 +60,7 @@ export function EmployeesPage() {
                             />
                         </label>
                     </div>
-                    <p className="px-6 py-8 text-sm text-slate-500">
-                        The employee directory is ready for the table view.
-                    </p>
+                    <EmployeeTable employees={filteredEmployees} />
                 </section>
             </main>
         </>
