@@ -44,3 +44,5 @@ export type TrainingSession = {
 }
 
 export type TrainingSessionStatus = 'planned' | 'cancelled' | 'unknown';
+
+export type TrainingStatus = 'valid' | 'expiringSoon' | 'expired' | 'missing' | 'uncertain';

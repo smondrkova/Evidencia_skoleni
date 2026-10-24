@@ -1,8 +1,8 @@
 import { addDays, format, isValid, parseISO } from 'date-fns';
-import type { Training, TrainingCompletion } from '../types/training.js';
+import type { Training, TrainingCompletion, TrainingStatus } from '../types/training.js';
 
 type ValidityResult = {
-    status: 'valid' | 'expiringSoon' | 'expired' | 'missing' | 'uncertain';
+    status: TrainingStatus;
     completion: TrainingCompletion | null;
     reason: string;
     reviewCount: number;
