@@ -1,5 +1,6 @@
 import { formatDate } from '../../utils/formatDate';
 import { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import type {
     Training,
     TrainingCompletion,
@@ -134,9 +135,13 @@ export function EmployeeTrainingTable({
                                 <Fragment key={training.code}>
                                     <tr>
                                         <td className="min-w-48 px-6 py-4">
-                                            <span className="block font-medium">
+                                            <Link
+                                                to={`/trainings/${encodeURIComponent(training.code)}`}
+                                                state={{ employeeId: employee.id }}
+                                                className="block rounded font-medium text-blue-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                                            >
                                                 {training.name}
-                                            </span>
+                                            </Link>
                                             <span className="mt-1 block text-xs text-slate-500">
                                                 {training.code}
                                             </span>

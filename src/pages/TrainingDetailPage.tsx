@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { trainings, sessions } from '../app-data';
 import { formatDate } from '../utils/formatDate';
 import { formatTrainingRequirement, formatTrainingValidity } from '../utils/formatTraining';
@@ -9,6 +9,10 @@ const referenceDate = '2026-10-01';
 
 export function TrainingDetailPage() {
     const { trainingCode } = useParams();
+    const location = useLocation();
+    const employeeId =
+        typeof location.state?.employeeId === 'string' ? location.state.employeeId : null;
+    const backPath = employeeId ? `/employees/${encodeURIComponent(employeeId)}` : '/trainings';
     const training = trainings.find((item) => item.code === trainingCode);
     const mainRef = useRef<HTMLElement>(null);
     const trainingSessions = sessions.filter((session) => session.trainingCode === trainingCode);
@@ -33,10 +37,11 @@ export function TrainingDetailPage() {
             className="mx-auto max-w-6xl px-5 py-9 focus:outline-none sm:px-8 sm:py-12"
         >
             <Link
-                to="/trainings"
+                to={backPath}
                 className="mb-6 inline-block rounded text-sm font-medium text-blue-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600"
             >
-                <span aria-hidden="true">← </span>Back to trainings
+                <span aria-hidden="true">← </span>
+                {employeeId ? 'Back to employee' : 'Back to trainings'}
             </Link>
             <h1 className="mb-6 text-3xl font-semibold tracking-tight">Training details</h1>
             {training ? (
