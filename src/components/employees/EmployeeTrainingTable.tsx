@@ -1,8 +1,11 @@
 import { formatDate } from '../../utils/formatDate';
 import type { Training, TrainingCompletion, TrainingStatus } from '../../types/training';
 import { getTrainingValidity } from '../../domain/validity';
+import { getTrainingRequirement } from '../../domain/requirements';
+import type { Employee } from '../../types/employee';
 
 type EmployeeTrainingTableProps = {
+    employee: Employee;
     trainings: Training[];
     records: TrainingCompletion[];
     referenceDate: string;
@@ -16,11 +19,28 @@ const statuses: Record<TrainingStatus, { label: string; className: string }> = {
     uncertain: { label: 'Uncertain', className: 'bg-violet-50 text-violet-700' },
 };
 
+const requirementLabels = {
+    required: 'Required',
+    optional: 'Not required',
+    unknown: 'Needs review',
+};
+
 export function EmployeeTrainingTable({
+    employee,
     trainings,
     records,
     referenceDate,
 }: EmployeeTrainingTableProps) {
+    const visibleTrainings = trainings
+        .map((training) => ({
+            training,
+            requirement: getTrainingRequirement(employee, training.requirement),
+        }))
+        .filter(
+            ({ training, requirement }) =>
+                requirement.status !== 'optional' ||
+                records.some((record) => record.trainingCode === training.code),
+        );
     const unknownCodes = [
         ...new Set(
             records
@@ -48,14 +68,14 @@ export function EmployeeTrainingTable({
                     <p className="text-xs text-slate-500">As of {formatDate(referenceDate)}</p>
                 </div>
                 <p className="mt-2 text-sm text-slate-500">
-                    All catalog trainings are shown. A missing record does not mean the training is
-                    required for this employee.
+                    Required trainings and requirements needing review are shown. Other trainings
+                    appear only if this employee has a completion record.
                 </p>
             </div>
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                     <caption className="sr-only">
-                        Training validity based on this employee's completion records.
+                        Training requirements and validity for this employee.
                     </caption>
                     <thead className="bg-slate-50 text-xs text-slate-500">
                         <tr>
@@ -69,7 +89,13 @@ export function EmployeeTrainingTable({
                                 scope="col"
                                 className="px-5 py-3.5"
                             >
-                                Status
+                                Requirement
+                            </th>
+                            <th
+                                scope="col"
+                                className="px-5 py-3.5"
+                            >
+                                Validity
                             </th>
                             <th
                                 scope="col"
@@ -92,7 +118,7 @@ export function EmployeeTrainingTable({
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {trainings.map((training) => {
+                        {visibleTrainings.map(({ training, requirement }) => {
                             const result = getTrainingValidity(training, records, referenceDate);
                             const style = statuses[result.status];
                             return (
@@ -102,6 +128,16 @@ export function EmployeeTrainingTable({
                                         <span className="mt-1 block text-xs text-slate-500">
                                             {training.code}
                                         </span>
+                                    </td>
+                                    <td className="min-w-48 px-5 py-4">
+                                        <span
+                                            className={`text-xs font-semibold ${requirement.status === 'unknown' ? 'text-amber-800' : 'text-slate-700'}`}
+                                        >
+                                            {requirementLabels[requirement.status]}
+                                        </span>
+                                        <p className="mt-1 text-xs text-slate-500">
+                                            {requirement.reason}
+                                        </p>
                                     </td>
                                     <td className="px-5 py-4">
                                         <span
@@ -130,9 +166,9 @@ export function EmployeeTrainingTable({
                         })}
                     </tbody>
                 </table>
-                {trainings.length === 0 && (
+                {visibleTrainings.length === 0 && (
                     <p className="px-6 py-8 text-sm text-slate-500">
-                        No trainings are available in the catalog.
+                        No required trainings or recorded completions to display.
                     </p>
                 )}
             </div>

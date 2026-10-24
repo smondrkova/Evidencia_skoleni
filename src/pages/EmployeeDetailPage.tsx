@@ -37,6 +37,7 @@ export function EmployeeDetailPage() {
                 <>
                     <EmployeeDetail employee={employee} />
                     <EmployeeTrainingTable
+                        employee={employee}
                         trainings={trainings}
                         records={employeeRecords}
                         referenceDate={referenceDate}
