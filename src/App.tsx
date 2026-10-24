@@ -11,7 +11,7 @@ function App() {
         <HashRouter>
             <div className="min-h-screen bg-slate-50 text-slate-800">
                 <header className="border-b border-slate-200 bg-white">
-                    <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
+                    <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
                         <Link
                             to="/"
                             className="rounded text-sm font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-blue-600"
