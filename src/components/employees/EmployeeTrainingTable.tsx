@@ -1,13 +1,21 @@
 import { formatDate } from '../../utils/formatDate';
-import type { Training, TrainingCompletion, TrainingStatus } from '../../types/training';
+import { Fragment } from 'react';
+import type {
+    Training,
+    TrainingCompletion,
+    TrainingSession,
+    TrainingStatus,
+} from '../../types/training';
 import { getTrainingValidity } from '../../domain/validity';
 import { getTrainingRequirement } from '../../domain/requirements';
 import type { Employee } from '../../types/employee';
+import { AvailableSessions } from './AvailableSessions';
 
 type EmployeeTrainingTableProps = {
     employee: Employee;
     trainings: Training[];
     records: TrainingCompletion[];
+    sessions: TrainingSession[];
     referenceDate: string;
 };
 
@@ -29,6 +37,7 @@ export function EmployeeTrainingTable({
     employee,
     trainings,
     records,
+    sessions,
     referenceDate,
 }: EmployeeTrainingTableProps) {
     const visibleTrainings = trainings
@@ -122,46 +131,63 @@ export function EmployeeTrainingTable({
                             const result = getTrainingValidity(training, records, referenceDate);
                             const style = statuses[result.status];
                             return (
-                                <tr key={training.code}>
-                                    <td className="min-w-48 px-6 py-4">
-                                        <span className="block font-medium">{training.name}</span>
-                                        <span className="mt-1 block text-xs text-slate-500">
-                                            {training.code}
-                                        </span>
-                                    </td>
-                                    <td className="min-w-48 px-5 py-4">
-                                        <span
-                                            className={`text-xs font-semibold ${requirement.status === 'unknown' ? 'text-amber-800' : 'text-slate-700'}`}
-                                        >
-                                            {requirementLabels[requirement.status]}
-                                        </span>
-                                        <p className="mt-1 text-xs text-slate-500">
-                                            {requirement.reason}
-                                        </p>
-                                    </td>
-                                    <td className="px-5 py-4">
-                                        <span
-                                            className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${style.className}`}
-                                        >
-                                            {style.label}
-                                        </span>
-                                    </td>
-                                    <td className="px-5 py-4 whitespace-nowrap text-slate-600">
-                                        {formatDate(result.completion?.completionDate)}
-                                    </td>
-                                    <td className="px-5 py-4 whitespace-nowrap text-slate-600">
-                                        {formatDate(result.completion?.validUntil)}
-                                    </td>
-                                    <td className="min-w-64 px-5 py-4 text-sm text-slate-500">
-                                        {result.reason}
-                                        {result.reviewCount > 0 && (
-                                            <p className="mt-2 text-xs text-amber-800">
-                                                Records needing review: {result.reviewCount}. These
-                                                do not confirm validity.
+                                <Fragment key={training.code}>
+                                    <tr>
+                                        <td className="min-w-48 px-6 py-4">
+                                            <span className="block font-medium">
+                                                {training.name}
+                                            </span>
+                                            <span className="mt-1 block text-xs text-slate-500">
+                                                {training.code}
+                                            </span>
+                                        </td>
+                                        <td className="min-w-48 px-5 py-4">
+                                            <span
+                                                className={`text-xs font-semibold ${requirement.status === 'unknown' ? 'text-amber-800' : 'text-slate-700'}`}
+                                            >
+                                                {requirementLabels[requirement.status]}
+                                            </span>
+                                            <p className="mt-1 text-xs text-slate-500">
+                                                {requirement.reason}
                                             </p>
-                                        )}
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td className="px-5 py-4">
+                                            <span
+                                                className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap ${style.className}`}
+                                            >
+                                                {style.label}
+                                            </span>
+                                        </td>
+                                        <td className="px-5 py-4 whitespace-nowrap text-slate-600">
+                                            {formatDate(result.completion?.completionDate)}
+                                        </td>
+                                        <td className="px-5 py-4 whitespace-nowrap text-slate-600">
+                                            {formatDate(result.completion?.validUntil)}
+                                        </td>
+                                        <td className="min-w-64 px-5 py-4 text-sm text-slate-500">
+                                            {result.reason}
+                                            {result.reviewCount > 0 && (
+                                                <p className="mt-2 text-xs text-amber-800">
+                                                    Records needing review: {result.reviewCount}.
+                                                    These do not confirm validity.
+                                                </p>
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td
+                                            colSpan={6}
+                                            className="px-6 pb-4 pt-2"
+                                        >
+                                            <AvailableSessions
+                                                trainingCode={training.code}
+                                                trainingName={training.name}
+                                                sessions={sessions}
+                                                referenceDate={referenceDate}
+                                            />
+                                        </td>
+                                    </tr>
+                                </Fragment>
                             );
                         })}
                     </tbody>

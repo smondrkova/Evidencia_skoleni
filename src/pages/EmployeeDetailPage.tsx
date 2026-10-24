@@ -1,12 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { employees, trainings, completions } from '../app-data';
+import { employees, trainings, completions, sessions } from '../app-data';
 import { EmployeeDetail } from '../components/employees/EmployeeDetail';
 import { EmployeeTrainingTable } from '../components/employees/EmployeeTrainingTable';
 
 const referenceDate = '2026-10-01';
 
-// Resolve the employee from the URL and handle missing or ambiguous identifiers.
 export function EmployeeDetailPage() {
     const { employeeId } = useParams();
     const matches = employees.filter((employee) => employee.id === employeeId);
@@ -40,6 +39,7 @@ export function EmployeeDetailPage() {
                         employee={employee}
                         trainings={trainings}
                         records={employeeRecords}
+                        sessions={sessions}
                         referenceDate={referenceDate}
                     />
                 </>
