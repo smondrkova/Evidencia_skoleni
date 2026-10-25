@@ -24,6 +24,5 @@ dist-ssr
 *.sw?
 
 # Docs and data
-/docs/
 /data/
 
